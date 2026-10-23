@@ -1,0 +1,32 @@
+<form method="post" enctype="multipart/form-data" >
+    {% csrf_token %}
+    <div>
+        {{form.username.label_tag}}
+        {{form.username}}
+        {% if form.username.errors %}
+        <a> {{form.username.errors}}</a>
+        {% endif %}
+    </div>
+    <div>
+        {{form.email.label_tag}}
+        {{form.email}}
+        {% if form.email.errors %}
+        <a> {{form.email.errors}}</a>
+        {% endif %}
+    </div>
+    <div>
+        {{form.password1.label_tag}}
+        {{form.password1}}
+        {% if form.password1.errors %}
+        <a> {{form.password1.errors}}</a>
+        {% endif %}
+    </div>
+    <div>
+        {{form.password2.label_tag}}
+        {{form.password2}}
+        {% if form.password2.errors %}
+        <a> {{form.password2.errors}}</a>
+        {% endif %}
+    </div>
+    <button type="submit">Зарегистрироваться</button>
+</form>

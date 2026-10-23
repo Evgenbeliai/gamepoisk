@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    /* Специфичные стили для страницы списка игр */
+    .games-page-container {
+        width: 100%;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 30px;
+        border-bottom: 1px solid #1f2833;
+        padding-bottom: 15px;
+    }
+
+    .page-title span {
+        color: var(--accent-color);
+        text-shadow: 0 0 10px rgba(69, 243, 255, 0.3);
+    }
+
+    /* Форма поиска */
+    .search-content {
+        background-color: var(--header-bg);
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #2c3a4e;
+        margin-bottom: 40px;
+    }
+
+    .search-form {
+        display: flex;
+        gap: 15px;
+    }
+
+    .input-wrapper {
+        flex: 1;
+    }
+
+    #search-input {
+        width: 100%;
+        background-color: var(--bg-color);
+        border: 2px solid #2c3a4e;
+        color: var(--white);
+        padding: 12px 20px;
+        border-radius: 5px;
+        font-size: 15px;
+        transition: 0.3s ease;
+    }
+
+    #search-input:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 10px rgba(69, 243, 255, 0.2);
+    }
+
+    .submit-button {
+        background-color: var(--accent-color);
+        color: var(--bg-color);
+        border: none;
+        padding: 0 30px;
+        border-radius: 5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: 0.3s ease;
+    }
+
+    .submit-button:hover {
+        box-shadow: 0 0 15px var(--accent-color);
+        transform: translateY(-1px);
+    }
+
+    /* Сетка игр */
+    .games-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+        list-style: none;
+        padding: 0;
+    }
+
+    .game-item {
+        background-color: var(--header-bg);
+        border: 1px solid #2c3a4e;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .game-link {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        width: 100%;
+        height: 100%;
+    }
+
+    .game-name {
+        font-weight: 600;
+        font-size: 16px;
+        color: var(--white);
+        transition: 0.3s ease;
+    }
+
+    .game-arrow {
+        color: var(--text-muted);
+        font-size: 18px;
+        transition: 0.3s ease;
+    }
+
+    /* Эффекты при наведении на карточку */
+    .game-item:hover {
+        border-color: var(--accent-color);
+        box-shadow: 0 5px 15px rgba(69, 243, 255, 0.15);
+        transform: translateY(-3px);
+    }
+
+    .game-item:hover .game-name {
+        color: var(--accent-color);
+    }
+
+    .game-item:hover .game-arrow {
+        color: var(--accent-color);
+        transform: translateX(5px);
+    }
+
+    /* Стили для пустых результатов */
+    .no-results {
+        text-align: center;
+        padding: 50px 20px;
+        background-color: var(--header-bg);
+        border: 2px dashed #2c3a4e;
+        border-radius: 8px;
+    }
+
+    .no-results-icon {
+        font-size: 40px;
+        margin-bottom: 15px;
+    }
+
+    .no-results h2 {
+        font-size: 20px;
+        margin-bottom: 10px;
+        color: var(--white);
+    }
+
+    .no-results p {
+        color: var(--text-muted);
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    .reset-search-btn {
+        display: inline-block;
+        color: var(--accent-color);
+        font-weight: 600;
+        font-size: 14px;
+        border-bottom: 1px dashed var(--accent-color);
+        padding-bottom: 2px;
+    }
+
+    .reset-search-btn:hover {
+        text-shadow: 0 0 8px var(--accent-color);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Мобильная адаптивность */
+    @media (max-width: 576px) {
+        .search-form {
+            flex-direction: column;
+        }
+        .submit-button {
+            padding: 12px;
+            width: 100%;
+        }
+        .games-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="games-page-container">
+    
+    <!-- Заголовок страницы -->
+    <h1 class="page-title">Список <span>игры</span></h1>
+
+    <!-- Форма поиска -->
+    <div class="search-content">
+        <form method="get" class="search-form">
+            <div class="input-wrapper">
+                <input 
+                    type="text" 
+                    name="q" 
+                    id="search-input" 
+                    placeholder="Введите название игр..." 
+                    value="{{ request.GET.q|default:'' }}"
+                >
+            </div>
+            <button type="submit" class="submit-button">Поиск</button>
+        </form>
+    </div>
+
+    <!-- Отображение списка игр -->
+    <div class="games-list-wrapper">
+        {% if games %}
+            <ul class="games-grid">
+                {% for i in games %}
+                <li class="game-item">
+                    <a href="{% url 'gameinf' i.id %}" class="game-link">
+                        <span class="game-name">{{ i }}</span>
+                        <span class="game-arrow">→</span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <!-- Если поиск не дал результатов -->
+            <div class="no-results">
+                <div class="no-results-icon">🕵️‍♂️</div>
+                <h2>Игр не найдено</h2>
+                <p>Попробуйте изменить запрос или проверить правильность написания.</p>
+                {% if request.GET.q %}
+                    <a href="?q=" class="reset-search-btn">Сбросить поиск</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}
