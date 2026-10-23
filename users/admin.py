@@ -29,3 +29,4 @@ class UsersAdmin(UserAdmin):
     add_fieldsets = UserAdmin.add_fieldsets + (
         ('Профиль', {'fields': ('email', 'avatar', 'bio')}),
     )
+    
