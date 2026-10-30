@@ -20,3 +20,5 @@ def regist(request):
         form = CustomUserCreationform()
     return render(request, 'regist.html', {'form':form})
 # Create your views here.
+
+#print("adasd")
